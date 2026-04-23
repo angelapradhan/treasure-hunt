@@ -202,3 +202,30 @@ let unlockedLevels = JSON.parse(localStorage.getItem('hunt_unlocked')) || [0];
 let currentMapId = 0;
 let myLives = 3;
 let currentMode = 'solo';
+
+// --- RANK & UI ---
+function updateUI() {
+    document.getElementById('coin-count').innerText = coins;
+    document.getElementById('lives-display').innerText = "My ❤️: " + "❤️".repeat(myLives);
+    document.getElementById('rank-display').innerText = "Rank: " + getRank(coins);
+}
+
+function getRank(pts) {
+    if (pts < 500) return "Bronze";
+    if (pts < 1500) return "Silver";
+    if (pts < 3000) return "Gold";
+    if (pts < 5000) return "Platinum";
+    if (pts < 8000) return "Diamond";
+    return "Crown";
+}
+
+function switchMode(mode) {
+    currentMode = mode;
+    myLives = 3;
+    document.getElementById('solo-screen').classList.toggle('hidden', mode !== 'solo');
+    document.getElementById('multi-screen').classList.toggle('hidden', mode !== 'multi');
+    document.getElementById('btn-solo').classList.toggle('active', mode === 'solo');
+    document.getElementById('btn-multi').classList.toggle('active', mode === 'multi');
+    updateUI();
+    if (mode === 'solo') initSoloGame();
+}
