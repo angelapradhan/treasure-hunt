@@ -1,143 +1,143 @@
-// // 1. Game Config - Maps, Costs, and Rewards
-// const MAPS = [
-//     { id: 0, name: "Desert Island", cost: 0, reward: 20 },
-//     { id: 1, name: "Mystic Forest", cost: 50, reward: 50 },
-//     { id: 2, name: "Frozen Peak", cost: 150, reward: 120 },
-//     { id: 3, name: "Skull Cave", cost: 400, reward: 300 }
-// ];
+// 1. Game Config - Maps, Costs, and Rewards
+const MAPS = [
+    { id: 0, name: "Desert Island", cost: 0, reward: 20 },
+    { id: 1, name: "Mystic Forest", cost: 50, reward: 50 },
+    { id: 2, name: "Frozen Peak", cost: 150, reward: 120 },
+    { id: 3, name: "Skull Cave", cost: 400, reward: 300 }
+];
 
-// // 2. State Management (Loading from LocalStorage)
-// let coins = parseInt(localStorage.getItem('hunt_coins')) || 0;
-// let unlockedLevels = JSON.parse(localStorage.getItem('hunt_unlocked')) || [0];
-// let currentMapId = 0;
-// let treasureIndex;
+// 2. State Management (Loading from LocalStorage)
+let coins = parseInt(localStorage.getItem('hunt_coins')) || 0;
+let unlockedLevels = JSON.parse(localStorage.getItem('hunt_unlocked')) || [0];
+let currentMapId = 0;
+let treasureIndex;
 
-// // 3. UI Elements
-// const coinDisplay = document.getElementById('coin-count');
-// const gridDisplay = document.getElementById('map-grid');
-// const shopModal = document.getElementById('shop-modal');
-// const levelList = document.getElementById('level-list');
-// const mapNameDisplay = document.getElementById('current-map-name');
+// 3. UI Elements
+const coinDisplay = document.getElementById('coin-count');
+const gridDisplay = document.getElementById('map-grid');
+const shopModal = document.getElementById('shop-modal');
+const levelList = document.getElementById('level-list');
+const mapNameDisplay = document.getElementById('current-map-name');
 
-// // 4. Initialize the Hunt Map
-// function initHunt() {
-//     // UI Update
-//     coinDisplay.innerText = coins;
-//     mapNameDisplay.innerText = "Current Map: " + MAPS[currentMapId].name;
+// 4. Initialize the Hunt Map
+function initHunt() {
+    // UI Update
+    coinDisplay.innerText = coins;
+    mapNameDisplay.innerText = "Current Map: " + MAPS[currentMapId].name;
 
-//     // Clear Grid
-//     gridDisplay.innerHTML = '';
+    // Clear Grid
+    gridDisplay.innerHTML = '';
 
-//     // Random Treasure Position (0 to 15)
-//     treasureIndex = Math.floor(Math.random() * 16);
+    // Random Treasure Position (0 to 15)
+    treasureIndex = Math.floor(Math.random() * 16);
 
-//     // Create 16 Cells
-//     for (let i = 0; i < 16; i++) {
-//         const cell = document.createElement('div');
-//         cell.className = 'cell';
-//         cell.dataset.id = i;
-//         cell.onclick = () => checkTreasure(i, cell);
-//         gridDisplay.appendChild(cell);
-//     }
-// }
+    // Create 16 Cells
+    for (let i = 0; i < 16; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.id = i;
+        cell.onclick = () => checkTreasure(i, cell);
+        gridDisplay.appendChild(cell);
+    }
+}
 
-// // 5. Check if the clicked cell has treasure
-// function checkTreasure(idx, el) {
-//     if (el.classList.contains('found') || el.classList.contains('miss')) return;
+// 5. Check if the clicked cell has treasure
+function checkTreasure(idx, el) {
+    if (el.classList.contains('found') || el.classList.contains('miss')) return;
 
-//     if (idx === treasureIndex) {
-//         el.classList.add('found');
-//         el.innerText = '💎';
+    if (idx === treasureIndex) {
+        el.classList.add('found');
+        el.innerText = '💎';
 
-//         // Reward halne
-//         let prize = MAPS[currentMapId].reward;
-//         coins += prize;
+        // Reward halne
+        let prize = MAPS[currentMapId].reward;
+        coins += prize;
 
-//         saveData(); // Save to LocalStorage
-//         coinDisplay.innerText = coins; // Update Screen
+        saveData(); // Save to LocalStorage
+        coinDisplay.innerText = coins; // Update Screen
 
-//         setTimeout(() => {
-//             alert(Sahi ho Captain! Tapai le 💰${prize} coins bhetnu bhayo.);
-//             initHunt(); // Reset map for new hunt
-//         }, 300);
-//     } else {
-//         el.classList.add('miss');
-//         el.innerText = '❌';
-//     }
-// }
+        setTimeout(() => {
+            alert(Sahi ho Captain! Tapai le 💰${prize} coins bhetnu bhayo.);
+            initHunt(); // Reset map for new hunt
+        }, 300);
+    } else {
+        el.classList.add('miss');
+        el.innerText = '❌';
+    }
+}
 
-// // 6. Shop Functions (Unlock & Switch Levels)
-// function toggleShop() {
-//     shopModal.classList.toggle('hidden');
-//     if (!shopModal.classList.contains('hidden')) renderShop();
-// }
+// 6. Shop Functions (Unlock & Switch Levels)
+function toggleShop() {
+    shopModal.classList.toggle('hidden');
+    if (!shopModal.classList.contains('hidden')) renderShop();
+}
 
-// function renderShop() {
-//     levelList.innerHTML = '';
+function renderShop() {
+    levelList.innerHTML = '';
 
-//     MAPS.forEach(map => {
-//         const isUnlocked = unlockedLevels.includes(map.id);
-//         const canAfford = coins >= map.cost;
+    MAPS.forEach(map => {
+        const isUnlocked = unlockedLevels.includes(map.id);
+        const canAfford = coins >= map.cost;
 
-//         const card = document.createElement('div');
-//         card.className = 'level-card';
+        const card = document.createElement('div');
+        card.className = 'level-card';
 
-//         // Create Card HTML
-//         card.innerHTML = `
-//             <div style="text-align:left;">
-//                 <strong>${map.name}</strong><br>
-//                 <small>${isUnlocked ? 'Unlocked' : 'Cost: 💰' + map.cost}</small>
-//             </div>
-//             <div>
-//                 ${isUnlocked 
-//                     ? <button onclick="selectMap(${map.id})">Play Map</button> 
-//                     : `<button class="${canAfford ? 'btn-unlock' : 'btn-locked'}" 
-//                         onclick="unlockMap(${map.id}, ${map.cost})">
-//                         ${canAfford ? 'Unlock (💰' + map.cost + ')' : 'Need More Gold'}
-//                        </button>`
-//                 }
-//             </div>
-//         `;
-//         levelList.appendChild(card);
-//     });
-// }
+        // Create Card HTML
+        card.innerHTML = `
+            <div style="text-align:left;">
+                <strong>${map.name}</strong><br>
+                <small>${isUnlocked ? 'Unlocked' : 'Cost: 💰' + map.cost}</small>
+            </div>
+            <div>
+                ${isUnlocked 
+                    ? <button onclick="selectMap(${map.id})">Play Map</button> 
+                    : `<button class="${canAfford ? 'btn-unlock' : 'btn-locked'}" 
+                        onclick="unlockMap(${map.id}, ${map.cost})">
+                        ${canAfford ? 'Unlock (💰' + map.cost + ')' : 'Need More Gold'}
+                       </button>`
+                }
+            </div>
+        `;
+        levelList.appendChild(card);
+    });
+}
 
-// // THIS IS THE MAIN PART: Deducts coins and saves
-// function unlockMap(id, cost) {
-//     if (coins >= cost) {
-//         // 1. Paisa ghataune
-//         coins -= cost; 
+// THIS IS THE MAIN PART: Deducts coins and saves
+function unlockMap(id, cost) {
+    if (coins >= cost) {
+        // 1. Paisa ghataune
+        coins -= cost; 
 
-//         // 2. Unlocked list ma thapne
-//         unlockedLevels.push(id);
+        // 2. Unlocked list ma thapne
+        unlockedLevels.push(id);
 
-//         // 3. Browser memory ma save garne
-//         saveData();
+        // 3. Browser memory ma save garne
+        saveData();
 
-//         // 4. UI Update garne
-//         coinDisplay.innerText = coins;
-//         renderShop();
+        // 4. UI Update garne
+        coinDisplay.innerText = coins;
+        renderShop();
 
-//         alert("Mubarak cha! Naya map khulyo.");
-//     } else {
-//         alert("Paisa pugena! Map ma treasure khojera coins kamau.");
-//     }
-// }
+        alert("Mubarak cha! Naya map khulyo.");
+    } else {
+        alert("Paisa pugena! Map ma treasure khojera coins kamau.");
+    }
+}
 
-// function selectMap(id) {
-//     currentMapId = id;
-//     toggleShop();
-//     initHunt();
-// }
+function selectMap(id) {
+    currentMapId = id;
+    toggleShop();
+    initHunt();
+}
 
-// // 7. Save Data to Browser
-// function saveData() {
-//     localStorage.setItem('hunt_coins', coins);
-//     localStorage.setItem('hunt_unlocked', JSON.stringify(unlockedLevels));
-// }
+// 7. Save Data to Browser
+function saveData() {
+    localStorage.setItem('hunt_coins', coins);
+    localStorage.setItem('hunt_unlocked', JSON.stringify(unlockedLevels));
+}
 
-// // Start Game on Load
-// initHunt();
+// Start Game on Load
+initHunt();
 
 // --- FIREBASE CONFIG (Verified from your image) ---
 const firebaseConfig = {
