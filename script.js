@@ -195,3 +195,10 @@ const SOFTWARICA_RIDDLES = [
         ans: "Basement Parking"
     }
 ];
+
+// --- STATE ---
+let coins = parseInt(localStorage.getItem('hunt_coins')) || 0;
+let unlockedLevels = JSON.parse(localStorage.getItem('hunt_unlocked')) || [0];
+let currentMapId = 0;
+let myLives = 3;
+let currentMode = 'solo';
