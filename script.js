@@ -229,3 +229,59 @@ function switchMode(mode) {
     updateUI();
     if (mode === 'solo') initSoloGame();
 }
+
+// --- SOLO MODE (GRID & RIDDLE) ---
+function initSoloGame() {
+    const grid = document.getElementById('solo-grid');
+    grid.innerHTML = '';
+    const map = MAPS[currentMapId];
+    document.getElementById('current-map-name').innerText = "Map: " + map.name;
+
+    if (map.type === "riddle") {
+        renderRiddle(grid);
+    } else {
+        const treasureIdx = Math.floor(Math.random() * 16);
+        for (let i = 0; i < 16; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.onclick = () => {
+                if (cell.classList.contains('found') || cell.classList.contains('miss')) return;
+                if (i === treasureIdx) {
+                    cell.classList.add('found'); cell.innerText = '💎';
+                    coins += map.reward; saveLocal();
+                    setTimeout(() => { alert("💰 Victory! Found Treasure."); initSoloGame(); }, 300);
+                } else {
+                    cell.classList.add('miss'); cell.innerText = '❌';
+                }
+            };
+            grid.appendChild(cell);
+        }
+    }
+}
+
+function renderRiddle(container) {
+    const riddle = SOFTWARICA_RIDDLES[Math.floor(Math.random() * SOFTWARICA_RIDDLES.length)];
+    const box = document.createElement('div');
+    box.className = 'riddle-container';
+    box.innerHTML = `
+        <div class="riddle-card">
+            <h3>🧩 Softwarica Mystery</h3>
+            <p class="clue-text">"${riddle.clue}"</p>
+            <div class="options-list">
+                ${riddle.options.map(opt => <button class="gold-btn" onclick="checkRiddle('${opt}', '${riddle.ans}')">${opt}</button>).join('')}
+            </div>
+        </div>
+    `;
+    container.appendChild(box);
+}
+
+function checkRiddle(userAns, correctAns) {
+    if (userAns === correctAns) {
+        alert("Correct! You solved the Softwarica puzzle. +500 Gold");
+        coins += 500; saveLocal(); initSoloGame();
+    } else {
+        alert("Wrong Interpretation! Life lost.");
+        myLives--; updateUI();
+        if (myLives <= 0) { alert("Game Over! Map reset."); location.reload(); }
+    }
+}
